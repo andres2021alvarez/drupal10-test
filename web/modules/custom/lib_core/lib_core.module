@@ -197,10 +197,8 @@ function lib_core_createsubmit($webform_data) {
   unset($values['data']['retURL']);
   unset($values['data']['orgid']);
 
-  /** @var \Drupal\webform\Entity\Webform $webform */
   $webform = Webform::load($values['webform_id']);
 
-  /** @var \Drupal\webform\Entity\WebformSubmission $submission */
   $submission = WebformSubmission::create([
     'webform_id' => $webform->id(),
   ]);
