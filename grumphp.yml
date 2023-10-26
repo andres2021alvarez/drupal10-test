@@ -5,6 +5,8 @@ grumphp:
     failed: happy.txt
     succeeded: happy.txt
   tasks:
+    phpcpd:
+      directory: ["./web/modules/custom"]
     phpstan:
       level: 5
       triggered_by:
