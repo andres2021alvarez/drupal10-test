@@ -207,6 +207,7 @@ function lib_core_createsubmit($webform_data) {
     $submission->setElementData(strtolower($field_key), $field_value);
   }
   $submission->save();
+  
 }
 
 
