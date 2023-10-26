@@ -28,8 +28,8 @@ function lib_core_views_pre_render(ViewExecutable $view):void {
 /**
  * Lib core form alter childen hook_form_alter .
  *
- * @param object[] $form
- *   The form object.
+ * @param array<string, mixed> $form
+ *   The form array.
  */
 function lib_core_form_alter(array &$form, FormStateInterface $form_state, string $form_id):void {
 
@@ -129,23 +129,26 @@ function lib_core_theme(array $existing, string $type, string $theme, string $pa
 /**
  * Lib core preprocess file link children hook_preprocess_file_link().
  *
- * @param object[] $variables
+ * @param array<string, mixed> $variables
  *   The variables object links.
  */
-function lib_core_preprocess_file_link(&$variables):void {
+function lib_core_preprocess_file_link(&$variables) : void {
   if (isset($variables['link']) && $variables['link'] instanceof GeneratedLink) {
     $doc = new DOMDocument();
     $doc->loadHTML(mb_convert_encoding($variables['link']->getGeneratedLink(), 'HTML-ENTITIES', 'UTF-8'));
     $node = $doc->getElementsByTagName('a')[0];
     $node->setAttribute('target', '_blank');
-    $variables['link']->setGeneratedLink($doc->saveHTML());
+    $html = $doc->saveHTML();
+    if (is_string($html)) {
+      $variables['link']->setGeneratedLink($html);
+    }
   }
 }
 
 /**
  * Lib core node vie alter children hook_ENTITY_TYPE_view_alter.
  *
- * @param object[] $build
+ * @param array<string, mixed> $build
  *   Representing the entity content.
  */
 function lib_core_node_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display):void {
@@ -193,7 +196,7 @@ function lib_core_cron():void {
 /**
  * Create submission webform.
  *
- * @param object[] $webform_data
+ * @param array<string, mixed> $webform_data
  *   Get data from submission webform.
  */
 function lib_core_createsubmit(array $webform_data):void {
