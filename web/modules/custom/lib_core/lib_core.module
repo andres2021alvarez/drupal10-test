@@ -178,12 +178,17 @@ function lib_core_cron():void {
   $storage_handler = \Drupal::entityTypeManager()->getStorage("file");
 
   foreach ($files as $file) {
-    $locale_directory = $storage_handler->load($file)->get('uri')->getValue()[0]['value'];
-    $directory = explode('/', $locale_directory);
-    $uri = $directory[0] . '//' . $directory[2] . '/';
-    if (is_dir($uri)) {
-      if (!$file_system->scanDirectory($uri, '/.*/')) {
-        $file_system->rmdir($uri);
+
+    $file_entity = $storage_handler->load($file);
+
+    if ($file_entity) {
+      $locale_directory = $file_entity->get('uri')->getValue()[0]['value'];
+      $directory = explode('/', $locale_directory);
+      $uri = $directory[0] . '//' . $directory[2] . '/';
+      if (is_dir($uri)) {
+        if (!$file_system->scanDirectory($uri, '/.*/')) {
+          $file_system->rmdir($uri);
+        }
       }
     }
 
@@ -223,13 +228,16 @@ function lib_core_createsubmit(array $webform_data):void {
 
   $webform = Webform::load($values['webform_id']);
 
-  $submission = WebformSubmission::create([
-    'webform_id' => $webform->id(),
-  ]);
+  if ($webform) {
+    $submission = WebformSubmission::create([
+      'webform_id' => $webform->id(),
+    ]);
 
-  foreach ($values['data'] as $field_key => $field_value) {
-    $submission->setElementData(strtolower($field_key), $field_value);
+    foreach ($values['data'] as $field_key => $field_value) {
+      $submission->setElementData(strtolower($field_key), $field_value);
+    }
+    $submission->save();
+
   }
-  $submission->save();
 
 }
