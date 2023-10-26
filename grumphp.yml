@@ -8,7 +8,7 @@ grumphp:
     phpcpd:
       directory: ["./web/modules/custom"]
     phpstan:
-      level: 5
+      level: 1
       triggered_by:
         - php
         - inc

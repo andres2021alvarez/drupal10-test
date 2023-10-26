@@ -17,7 +17,7 @@ use Drupal\webform\Entity\WebformSubmission;
  * Implements hook_views_pre_render().
  */
 function lib_core_views_pre_render(ViewExecutable $view) {
-  if (isset($view) && ($view->storage->id() == 'payment_methods')) {
+  if ($view->storage->id() == 'payment_methods') {
     $view->element['#attached']['library'][] = 'lib_core/payment-methods';
   }
 }
@@ -152,6 +152,7 @@ function lib_core_cron() {
     ->getStorage('file')
     ->getQuery()
     ->condition('uri', '%pqr%', 'LIKE')
+    ->accessCheck(FALSE)
     ->execute();
   $storage_handler = \Drupal::entityTypeManager()->getStorage("file");
 
@@ -196,9 +197,10 @@ function lib_core_createsubmit($webform_data) {
   unset($values['data']['retURL']);
   unset($values['data']['orgid']);
 
-  // Check for a valid webform.
+  /** @var \Drupal\webform\Entity\Webform $webform */
   $webform = Webform::load($values['webform_id']);
 
+  /** @var \Drupal\webform\Entity\WebformSubmission $submission */
   $submission = WebformSubmission::create([
     'webform_id' => $webform->id(),
   ]);
