@@ -38,8 +38,6 @@ grumphp:
       no_local_repository: false
       with_dependencies: false
       strict: false
-    phpcpd:
-      directory: ["./web/modules/custom"]
     phpstan:
       level: 1
       triggered_by:
