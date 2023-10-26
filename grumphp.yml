@@ -6,7 +6,7 @@ grumphp:
     succeeded: happy.txt
   tasks:
     phpstan:
-      level: 1
+      level: 2
       triggered_by:
         - php
         - inc
