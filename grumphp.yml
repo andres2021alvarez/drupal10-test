@@ -5,12 +5,6 @@ grumphp:
     failed: happy.txt
     succeeded: happy.txt
   tasks:
-    phplint: ~
-    yamllint: ~
-    composer: ~
-    jsonlint: ~
-    phpcpd:
-      directory: ["./web/modules/custom"]
     phpstan:
       level: 5
       triggered_by:
@@ -25,6 +19,7 @@ grumphp:
     phpcs:
       encoding: utf-8
       triggered_by:
+        - changed_files
         - php
         - inc
         - module
@@ -32,4 +27,6 @@ grumphp:
         - profile
         - theme
       standard: vendor/drupal/coder/coder_sniffer/Drupal/,vendor/drupal/coder/coder_sniffer/DrupalPractice/
-    phpunit: ~
+  fixer:
+    enabled: true
+    fix_by_default: true
