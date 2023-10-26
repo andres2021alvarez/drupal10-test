@@ -19,7 +19,6 @@ grumphp:
       memory_limit: "-1"
       use_grumphp_paths: true
       ignore_patterns:
-        - cfg/
         - libraries/
         - modules/contrib
         - vendor

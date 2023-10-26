@@ -208,5 +208,8 @@ function lib_core_createsubmit($webform_data) {
   foreach ($values['data'] as $field_key => $field_value) {
     $submission->setElementData(strtolower($field_key), $field_value);
   }
+
+
+  
   $submission->save();
 }
