@@ -407,5 +407,9 @@ function getUriStyleImage($id, $style) {
   $originalImageUri = $file->getFileUri();
   $uriStyle = ImageStyle::load($style)->buildUrl($originalImageUri);
   return $uriStyle;
+
+  /** @var \Drupal\Core\Cache\MemoryBackendFactory $cache_backend_memory */
+  $cache_backend_memory = \Drupal::service("cache.backend.memory");
+  
 }
 

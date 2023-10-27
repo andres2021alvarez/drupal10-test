@@ -127,7 +127,7 @@ function lib_core_theme(array $existing, string $type, string $theme, string $pa
 }
 
 /**
- * Lib core preprocess file link children hook_preprocess_file_link().
+ * Lib core preprocess file link children template_preprocess_file_link().
  *
  * @param array<string, mixed> $variables
  *   The variables object links.
