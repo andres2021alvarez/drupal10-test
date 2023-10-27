@@ -1,0 +1,411 @@
+<?php
+
+/**
+ * @file
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Drupal\file\Entity\File;
+use Drupal\image\Entity\ImageStyle;
+use Drupal\media\Entity\Media;
+use Drupal\node\Entity\Node;
+use Drupal\paragraphs\Entity\Paragraph;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\views\ViewExecutable;
+
+/**
+ *
+ */
+function fsfb_intelecto_content_preprocess_block(&$variables) {
+
+  if ($variables['plugin_id'] == "views_block:category_banner-banner_categorias") {
+    $variables['#attached']['library'][] = 'fsfb_intelecto_content/blockDestacados';
+    foreach ($variables['content']['#cache']['tags'] as $value) {
+      if (strpos($value, "taxonomy_term:") !== FALSE) {
+        $tid = explode(":", $value)[1];
+      }
+    }
+    $term = isset($tid) ? Term::load($tid) : NULL;
+    if ($term) {
+      $name = $term->getName();
+      $variables['#attached']['drupalSettings']['fsfb_intelecto_content']['nameTerm'] = $name;
+    }
+  }
+  if ($variables['plugin_id'] == "views_block:events-taxonomy_events" || $variables['plugin_id'] == 'views_block:memories-taxonomy_memories') {
+    $tid = "";
+    foreach ($variables['content']['#cache']['tags'] as $value) {
+      if (strpos($value, "taxonomy_term:") !== FALSE) {
+        $tid = explode(":", $value)[1];
+      }
+    }
+    $term = isset($tid) ? Term::load($tid) : NULL;
+    if ($term) {
+      $description = $term->getDescription();
+      $variables['description'] = $description;
+      if ($variables['plugin_id'] == 'views_block:memories-taxonomy_memories') {
+        $query = \Drupal::entityQuery('node')
+          ->accessCheck(FALSE)
+          ->condition('type', 'memory')
+          ->condition('field_event_category', $tid);
+        $count = $query->count()->execute();
+        $variables['count'] = ($count == 0 || $count === NULL) ? '' : $count . ' videos';
+      }
+    }
+  }
+}
+
+/**
+ *
+ */
+function fsfb_intelecto_content_form_alter(&$form, &$form_state, $form_id) {
+
+  if ($form_id == "webform_submission_contact_block_content_16_add_form") {
+    $form['#attached']['library'][] = 'fsfb_intelecto_content/FormContact';
+  }
+
+  if ($form_id == 'node_event_edit_form' || $form_id == 'node_event_form') {
+    $form['#attached']['library'][] = 'fsfb_intelecto_content/formEvent';
+    $options_to_keep = [
+      'paciente' => 'paciente',
+      'personal_de_la_salud' => 'personal de la salud',
+    ];
+    if (isset($form['field_event_rol']['widget']['#options'])) {
+      $form['field_event_rol']['widget']['#options'] = array_intersect_key(
+        $form['field_event_rol']['widget']['#options'],
+        $options_to_keep
+      );
+    }
+  }
+  if ($form_id == 'node_event_edit_form' || $form_id == 'node_streaming_form') {
+    $options_to_keep = [
+      'paciente' => 'paciente',
+      'personal_de_la_salud' => 'personal de la salud',
+    ];
+    if (isset($form['field_event_rol']['widget']['#options'])) {
+      $form['field_event_rol']['widget']['#options'] = array_intersect_key(
+        $form['field_event_rol']['widget']['#options'],
+        $options_to_keep
+      );
+    }
+  }
+  if ($form_id == 'node_memory_edit_form' || $form_id == 'node_memory_form') {
+    $form['actions']['submit']['#submit'][] = 'fsfb_intelecto_content_memory_submit';
+  }
+}
+
+/**
+ *
+ */
+function fsfb_intelecto_content_preprocess_node(&$variables) {
+  $node = $variables['node'];
+  $node_type = $node->type->entity->get('type');
+  $viewMode = $variables['view_mode'];
+
+  switch ($node_type) {
+
+    case 'speaker':
+
+      switch ($viewMode) {
+
+        case 'card':
+
+          $professions = $node->get('field_profession')->referencedEntities();
+          $term_names = [];
+          foreach ($professions as $profession) {
+
+            $term_names[] = $profession->getName();
+          }
+
+          $variables['content']['field_profession_array'] = $term_names;
+          break;
+
+        case 'internal':
+
+          $professions = $node->get('field_profession')->referencedEntities();
+          $term_names = [];
+          foreach ($professions as $profession) {
+
+            $term_names[] = $profession->getName();
+          }
+
+          $variables['content']['field_profession_array'] = $term_names;
+          break;
+      }
+
+      break;
+
+    case 'event':
+
+      switch ($viewMode) {
+
+        case 'card':
+          $event = $node->id();
+          $query = \Drupal::entityQuery('node')
+            ->accessCheck(FALSE)
+            ->condition('type', 'memory')
+            ->condition('field_associated_event', $event);
+
+          $nids = $query->execute();
+          $video_count = count($nids);
+          $variables['content']['field_count_videos'] = ($video_count == 0) ? '' : $video_count . ' videos';
+          break;
+
+        case 'full':
+          $specialties = $node->get('field_event_category')->referencedEntities();
+          $specialties_terms = [];
+          foreach ($specialties as $speciality) {
+            $term_uri = Url::fromUri('entity:taxonomy_term/' . $speciality->id())->toString();
+            $term_name = $speciality->getName();
+            $specialties_terms[] = [
+              'uri' => $term_uri,
+              'name' => $term_name,
+            ];
+          }
+          $program_field = $node->get('field_attached_document');
+          $poster_field = $node->get('field_attachement_poster');
+
+          if (!$program_field->isEmpty()) {
+            $program_media_id = $program_field->target_id;
+            $program_media = Media::load($program_media_id);
+            if ($program_media) {
+              $program_uri = $program_media->get('field_media_file')->entity->getFileUri();
+              $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($program_uri);
+              $variables['content']['urlProgramfile'] = $file_url;
+            }
+          }
+          if (!$poster_field->isEmpty()) {
+            $poster_media_id = $poster_field->target_id;
+            $poster_media = Media::load($poster_media_id);
+            if ($poster_media) {
+              $poster_uri = $poster_media->get('field_media_file')->entity->getFileUri();
+              $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($poster_uri);
+              $variables['content']['urlPosterfile'] = $file_url;
+            }
+          }
+          $event = $node->id();
+          $query = \Drupal::entityQuery('node')
+            ->accessCheck(FALSE)
+            ->condition('type', 'memory')
+            ->condition('field_associated_event', $event);
+          $nids = $query->execute();
+          $video_count = count($nids);
+          $variables['content']['field_count_videos'] = ($video_count == 0) ? '' : $video_count . ' videos';
+          $variables['content']['field_categories'] = $specialties_terms;
+          break;
+      }
+
+      break;
+
+    case 'memory':
+
+      switch ($viewMode) {
+
+        case 'internal':
+          $specialties = $node->get('field_event_category')->referencedEntities();
+          $specialties_terms = [];
+          $video_field = $node->get('field_memory_video');
+
+          if (!$video_field->isEmpty()) {
+            $video_media_id = $video_field->target_id;
+            $video_media = Media::load($video_media_id);
+            if ($video_media) {
+              if ($video_media->hasField('field_media_video_file')) {
+                $video_uri = $video_media->get('field_media_video_file')->entity->getFileUri();
+                $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($video_uri);
+                $variables['content']['urlVideoLocal'] = $file_url;
+              }
+            }
+          }
+          foreach ($specialties as $speciality) {
+            $term_uri = Url::fromUri('entity:taxonomy_term/' . $speciality->id())->toString();
+            $term_name = $speciality->getName();
+            $specialties_terms[] = [
+              'uri' => $term_uri,
+              'name' => $term_name,
+            ];
+          }
+
+          $statistics = \Drupal::service('statistics.storage.node')->fetchView($variables['node']->id());
+          $totalCount = "";
+          if ($statistics) {
+            $totalCount = $statistics->getTotalCount();
+          }
+
+          $config = \Drupal::config('fsfb_intelecto_content.settings_social');
+
+          $variables['content']['field_categories'] = $specialties_terms;
+          $variables['content']['field_total_views'] = $totalCount;
+          $variables['content']['field_social_links'] = [
+            "facebook" => $config->get('facebook'),
+            "whatsapp" => $config->get('whatsapp'),
+            "twitter" => $config->get('twitter'),
+            "linkedln" => $config->get('linkedln'),
+            "you_tube" => $config->get('you_tube'),
+            "instagram" => $config->get('instagram'),
+          ];
+
+          break;
+
+        case 'pictures_gallery':
+
+          $paragraph_galery_images = $variables['node']->field_galery_images ?? NULL;
+          $imagesUrls = [];
+
+          foreach ($paragraph_galery_images as $pr) {
+            $id_paragraph = $pr->target_id;
+
+            /** @var \Drupal\paragraphs\Entity\Paragraph Paragraph */
+            $paragraph_load = Paragraph::load($id_paragraph);
+
+            if ($paragraph_load) {
+              $description = $paragraph_load->get('field_description')->value;
+              $image_reference = $paragraph_load->get('field_image')->target_id;
+
+              if ($image_reference) {
+                $url_image = getUriStyleImage($image_reference, '16_9');
+                $imagesUrls[] = ["image" => $url_image, "text" => $description];
+              }
+            }
+          }
+
+          $variables['content']['field_urls_images'] = $imagesUrls;
+          break;
+
+        case 'browse':
+          $event = $node->get('field_associated_event')->referencedEntities()[0]->id();
+          $query = \Drupal::entityQuery('node')
+            ->accessCheck(FALSE)
+            ->condition('type', 'memory')
+            ->condition('field_associated_event', $event)
+            ->sort('created', 'ASC')
+            ->execute();
+          $relatedNodes = Node::loadMultiple($query);
+          $previousNode = NULL;
+          $nextNode = NULL;
+          $currentNodeFound = FALSE;
+          foreach ($relatedNodes as $node) {
+            if ($currentNodeFound) {
+              $nextNode = $node;
+              break;
+            }
+
+            if ($node->id() == $variables['node']->id()) {
+              $currentNodeFound = TRUE;
+            }
+            else {
+              $previousNode = $node;
+            }
+          }
+          $variables['content']['previous_memory'] = $previousNode ? getNodeData($previousNode, 'Video anterior') : NULL;
+          $variables['content']['next_memory'] = $nextNode ? getNodeData($nextNode, 'Video siguiente') : NULL;
+          break;
+      }
+      break;
+
+    case 'streaming':
+      $config = \Drupal::config('fsfb_intelecto_content.settings_social');
+      $variables['field_social_links'] = [
+        "Facebook" => $config->get('facebook'),
+        "Whatsapp" => $config->get('whatsapp'),
+        "Twitter" => $config->get('twitter'),
+        "Linkedin" => $config->get('linkedln'),
+        "Youtube" => $config->get('you_tube'),
+        "Instagram" => $config->get('instagram'),
+      ];
+      break;
+
+    case 'investigation':
+      switch ($viewMode) {
+        case 'full':
+          $node_statistics = \Drupal::service('statistics.storage.node')->fetchView($node->id());
+          $config = \Drupal::config('fsfb_intelecto_content.settings_social');
+          $variables['total_views'] = $node_statistics->getTotalCount();
+          $variables['field_social_links'] = [
+            "Facebook" => $config->get('facebook'),
+            "Whatsapp" => $config->get('whatsapp'),
+            "Twitter" => $config->get('twitter'),
+            "Linkedin" => $config->get('linkedln'),
+            "Youtube" => $config->get('you_tube'),
+            "Instagram" => $config->get('instagram'),
+          ];
+          break;
+      }
+      break;
+  }
+}
+
+/**
+ *
+ */
+function fsfb_intelecto_content_memory_submit($form, FormStateInterface $form_state) {
+  $form_state_values = $form_state->getValues();
+  $event = Node::load($form_state_values['field_associated_event'][0]["target_id"]);
+  $rol = $event->get('field_event_rol')->referencedEntities();
+  $terms = $event->get('field_event_category')->referencedEntities();
+  $memory = Node::load($form_state_values['nid']);
+  $memory->set('field_event_rol', $rol);
+  $memory->set('field_event_category', $terms);
+  $memory->save();
+  $speakers = $memory->get('field_speakers')->referencedEntities();
+  $event->set('field_memory_speakers', $speakers);
+  $event->save();
+}
+
+/**
+ *
+ */
+function fsfb_intelecto_content_views_pre_render(ViewExecutable $view) {
+  if ($view->id() == 'memories' && $view->current_display == 'memories_speaker') {
+    $nid = $view->args[0];
+    $view->setTitle('Videos relacionados a ' . Node::load($nid)->label());
+  }
+  if ($view->id() == 'events' && $view->current_display == 'events_speaker') {
+    $nid = $view->args[0];
+    $view->setTitle('Eventos relacionados a ' . Node::load($nid)->label());
+  }
+}
+
+/**
+ *
+ */
+function fsfb_intelecto_content_get_node_data($node, $text) {
+  $title = $node->getTitle();
+  $image_uri = $image_alt = '';
+  $image_field = $node->get('field_card_image');
+
+  if (!$image_field->isEmpty()) {
+    $image_media_id = $image_field->target_id;
+    $image_media = Media::load($image_media_id);
+    $image_uri = getUriStyleImage($image_media_id, 'miniatura_crop_scale');
+    if ($image_media->hasField('field_media_image_1')) {
+      $image_alt = $image_media->get('field_media_image_1')->alt;
+    }
+    else {
+      $image_alt = $image_media->get('field_media_image')->alt;
+    }
+  }
+  $node_uri = $node->toUrl()->toString();
+  return [
+    'card__image__src' => $image_uri,
+    'card__image__alt' => $image_alt,
+    'card__image__output_image_tag' => TRUE,
+    'card__heading' => $title,
+    'card__heading__url' => $node_uri,
+    'card_icon_name' => 'arrow',
+    'card__link__text' => $text,
+  ];
+}
+
+/**
+ *
+ */
+function getUriStyleImage($id, $style) {
+  $media = Media::load($id);
+  $fid = $media->getSource()->getSourceFieldValue($media);
+  $file = File::load($fid);
+  $originalImageUri = $file->getFileUri();
+  $uriStyle = ImageStyle::load($style)->buildUrl($originalImageUri);
+  return $uriStyle;
+}
+
