@@ -1,0 +1,19 @@
+<?php
+
+namespace Drupal\fsfb_intelecto_core\Controller;
+
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Drupal\Core\Controller\ControllerBase;
+
+class CookieMenuController extends ControllerBase {
+
+  public function createCookieIntelecto($valor) {
+
+    $expiration = time() + 43200; // 12 horas en segundos.
+    // se crea cookie para manejo de menu en el header.
+    setcookie('controler_menu', $valor, $expiration, '/');
+    $response = new JsonResponse(['message' => 'Cookie creada con valor: ' . $valor]);
+
+    return $response;
+  }
+}
