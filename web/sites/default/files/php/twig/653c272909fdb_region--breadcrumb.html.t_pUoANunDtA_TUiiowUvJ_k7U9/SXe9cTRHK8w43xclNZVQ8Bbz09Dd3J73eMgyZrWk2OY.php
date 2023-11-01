@@ -1,109 +1,130 @@
 <?php
 
+use Drupal\Component\Utility\Html;
 use Twig\Environment;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Extension\SandboxExtension;
-use Twig\Markup;
 use Twig\Sandbox\SecurityError;
-use Twig\Sandbox\SecurityNotAllowedTagError;
 use Twig\Sandbox\SecurityNotAllowedFilterError;
 use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Sandbox\SecurityNotAllowedTagError;
 use Twig\Source;
 use Twig\Template;
 
-/* core/themes/olivero/templates/layout/region--breadcrumb.html.twig */
-class __TwigTemplate_9121adb504b3b45f6f8bd57722d53fa8 extends Template
-{
-    private $source;
-    private $macros = [];
+/**
+ * Core/themes/olivero/templates/layout/region--breadcrumb.html.twig .
+ */
+class __TwigTemplate_9121adb504b3b45f6f8bd57722d53fa8 extends Template {
+  private $source;
+  private $macros = [];
 
-    public function __construct(Environment $env)
-    {
-        parent::__construct($env);
+  /**
+   *
+   */
+  public function __construct(Environment $env) {
+    parent::__construct($env);
 
-        $this->source = $this->getSourceContext();
+    $this->source = $this->getSourceContext();
 
-        $this->parent = false;
+    $this->parent = FALSE;
 
-        $this->blocks = [
-        ];
-        $this->sandbox = $this->env->getExtension('\Twig\Extension\SandboxExtension');
-        $this->checkSecurity();
-    }
+    $this->blocks = [];
+    $this->sandbox = $this->env->getExtension('\Twig\Extension\SandboxExtension');
+    $this->checkSecurity();
+  }
 
-    protected function doDisplay(array $context, array $blocks = [])
-    {
-        $macros = $this->macros;
-        // line 15
-        echo "
+  /**
+   *
+   */
+  protected function doDisplay(array $context, array $blocks = []) {
+    $macros = $this->macros;
+    // Line 15.
+    echo "
 ";
-        // line 17
-        $context["classes"] = [0 => "region", 1 => ("region--" . \Drupal\Component\Utility\Html::getClass($this->sandbox->ensureToStringAllowed(        // line 19
-($context["region"] ?? null), 19, $this->source))), 2 => "grid-full", 3 => "layout--pass--content-medium"];
-        // line 24
-        echo "
+    // Line 17.
+    $context["classes"] = [
+      0 => "region",
+    // Line 19.
+      1 => ("region--" . Html::getClass($this->sandbox->ensureToStringAllowed(
+    ($context["region"] ?? NULL), 19, $this->source))),
+      2 => "grid-full",
+      3 => "layout--pass--content-medium",
+    ];
+    // Line 24.
+    echo "
 ";
-        // line 25
-        if (($context["content"] ?? null)) {
-            // line 26
-            echo "  <div";
-            echo $this->extensions['Drupal\Core\Template\TwigExtension']->escapeFilter($this->env, $this->sandbox->ensureToStringAllowed(twig_get_attribute($this->env, $this->source, ($context["attributes"] ?? null), "addClass", [0 => ($context["classes"] ?? null)], "method", false, false, true, 26), 26, $this->source), "html", null, true);
-            echo ">
+    // Line 25.
+    if (($context["content"] ?? NULL)) {
+      // Line 26.
+      echo "  <div";
+      echo $this->extensions['Drupal\Core\Template\TwigExtension']->escapeFilter($this->env, $this->sandbox->ensureToStringAllowed(twig_get_attribute($this->env, $this->source, ($context["attributes"] ?? NULL), "addClass", [0 => ($context["classes"] ?? NULL)], "method", FALSE, FALSE, TRUE, 26), 26, $this->source), "html", NULL, TRUE);
+      echo ">
     ";
-            // line 27
-            echo $this->extensions['Drupal\Core\Template\TwigExtension']->escapeFilter($this->env, $this->sandbox->ensureToStringAllowed(($context["content"] ?? null), 27, $this->source), "html", null, true);
-            echo "
+      // Line 27.
+      echo $this->extensions['Drupal\Core\Template\TwigExtension']->escapeFilter($this->env, $this->sandbox->ensureToStringAllowed(($context["content"] ?? NULL), 27, $this->source), "html", NULL, TRUE);
+      echo "
   </div>
 ";
-        }
+    }
+  }
+
+  /**
+   *
+   */
+  public function getTemplateName() {
+    return "core/themes/olivero/templates/layout/region--breadcrumb.html.twig";
+  }
+
+  /**
+   *
+   */
+  public function isTraitable() {
+    return FALSE;
+  }
+
+  /**
+   *
+   */
+  public function getDebugInfo() {
+    return [55 => 27, 50 => 26, 48 => 25, 45 => 24, 43 => 19, 42 => 17, 39 => 15];
+  }
+
+  /**
+   *
+   */
+  public function getSourceContext() {
+    return new Source("", "core/themes/olivero/templates/layout/region--breadcrumb.html.twig", "/var/www/html/web/core/themes/olivero/templates/layout/region--breadcrumb.html.twig");
+  }
+
+  /**
+   *
+   */
+  public function checkSecurity() {
+    static $tags = ["set" => 17, "if" => 25];
+    static $filters = ["clean_class" => 19, "escape" => 26];
+    static $functions = [];
+
+    try {
+      $this->sandbox->checkSecurity(
+            ['set', 'if'],
+            ['clean_class', 'escape'],
+            []
+        );
+    }
+    catch (SecurityError $e) {
+      $e->setSourceContext($this->source);
+
+      if ($e instanceof SecurityNotAllowedTagError && isset($tags[$e->getTagName()])) {
+        $e->setTemplateLine($tags[$e->getTagName()]);
+      }
+      elseif ($e instanceof SecurityNotAllowedFilterError && isset($filters[$e->getFilterName()])) {
+        $e->setTemplateLine($filters[$e->getFilterName()]);
+      }
+      elseif ($e instanceof SecurityNotAllowedFunctionError && isset($functions[$e->getFunctionName()])) {
+        $e->setTemplateLine($functions[$e->getFunctionName()]);
+      }
+
+      throw $e;
     }
 
-    public function getTemplateName()
-    {
-        return "core/themes/olivero/templates/layout/region--breadcrumb.html.twig";
-    }
+  }
 
-    public function isTraitable()
-    {
-        return false;
-    }
-
-    public function getDebugInfo()
-    {
-        return array (  55 => 27,  50 => 26,  48 => 25,  45 => 24,  43 => 19,  42 => 17,  39 => 15,);
-    }
-
-    public function getSourceContext()
-    {
-        return new Source("", "core/themes/olivero/templates/layout/region--breadcrumb.html.twig", "/var/www/html/web/core/themes/olivero/templates/layout/region--breadcrumb.html.twig");
-    }
-    
-    public function checkSecurity()
-    {
-        static $tags = array("set" => 17, "if" => 25);
-        static $filters = array("clean_class" => 19, "escape" => 26);
-        static $functions = array();
-
-        try {
-            $this->sandbox->checkSecurity(
-                ['set', 'if'],
-                ['clean_class', 'escape'],
-                []
-            );
-        } catch (SecurityError $e) {
-            $e->setSourceContext($this->source);
-
-            if ($e instanceof SecurityNotAllowedTagError && isset($tags[$e->getTagName()])) {
-                $e->setTemplateLine($tags[$e->getTagName()]);
-            } elseif ($e instanceof SecurityNotAllowedFilterError && isset($filters[$e->getFilterName()])) {
-                $e->setTemplateLine($filters[$e->getFilterName()]);
-            } elseif ($e instanceof SecurityNotAllowedFunctionError && isset($functions[$e->getFunctionName()])) {
-                $e->setTemplateLine($functions[$e->getFunctionName()]);
-            }
-
-            throw $e;
-        }
-
-    }
 }

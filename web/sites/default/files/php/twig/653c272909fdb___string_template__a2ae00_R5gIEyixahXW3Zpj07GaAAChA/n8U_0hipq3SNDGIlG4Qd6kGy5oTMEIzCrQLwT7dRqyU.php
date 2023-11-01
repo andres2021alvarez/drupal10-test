@@ -1,84 +1,96 @@
 <?php
 
 use Twig\Environment;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Extension\SandboxExtension;
-use Twig\Markup;
 use Twig\Sandbox\SecurityError;
-use Twig\Sandbox\SecurityNotAllowedTagError;
 use Twig\Sandbox\SecurityNotAllowedFilterError;
 use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Sandbox\SecurityNotAllowedTagError;
 use Twig\Source;
 use Twig\Template;
 
-/* __string_template__a2ae0073686ae6ae97e0bcfae58e0457 */
-class __TwigTemplate_cf435b4b8f1e9e08a609f017bdc5d095 extends Template
-{
-    private $source;
-    private $macros = [];
+/**
+ * __string_template__a2ae0073686ae6ae97e0bcfae58e0457 .
+ */
+class __TwigTemplate_cf435b4b8f1e9e08a609f017bdc5d095 extends Template {
+  private $source;
+  private $macros = [];
 
-    public function __construct(Environment $env)
-    {
-        parent::__construct($env);
+  /**
+   *
+   */
+  public function __construct(Environment $env) {
+    parent::__construct($env);
 
-        $this->source = $this->getSourceContext();
+    $this->source = $this->getSourceContext();
 
-        $this->parent = false;
+    $this->parent = FALSE;
 
-        $this->blocks = [
-        ];
-        $this->sandbox = $this->env->getExtension('\Twig\Extension\SandboxExtension');
-        $this->checkSecurity();
+    $this->blocks = [];
+    $this->sandbox = $this->env->getExtension('\Twig\Extension\SandboxExtension');
+    $this->checkSecurity();
+  }
+
+  /**
+   *
+   */
+  protected function doDisplay(array $context, array $blocks = []) {
+    $macros = $this->macros;
+    // Line 1.
+    echo "<code>/api/prueba-rest-prueba</code>: GET, <del>POST</del>, <del>PATCH</del>, <del>DELETE</del>";
+  }
+
+  /**
+   *
+   */
+  public function getTemplateName() {
+    return "__string_template__a2ae0073686ae6ae97e0bcfae58e0457";
+  }
+
+  /**
+   *
+   */
+  public function getDebugInfo() {
+    return [39 => 1];
+  }
+
+  /**
+   *
+   */
+  public function getSourceContext() {
+    return new Source("", "__string_template__a2ae0073686ae6ae97e0bcfae58e0457", "");
+  }
+
+  /**
+   *
+   */
+  public function checkSecurity() {
+    static $tags = [];
+    static $filters = [];
+    static $functions = [];
+
+    try {
+      $this->sandbox->checkSecurity(
+            [],
+            [],
+            []
+        );
+    }
+    catch (SecurityError $e) {
+      $e->setSourceContext($this->source);
+
+      if ($e instanceof SecurityNotAllowedTagError && isset($tags[$e->getTagName()])) {
+        $e->setTemplateLine($tags[$e->getTagName()]);
+      }
+      elseif ($e instanceof SecurityNotAllowedFilterError && isset($filters[$e->getFilterName()])) {
+        $e->setTemplateLine($filters[$e->getFilterName()]);
+      }
+      elseif ($e instanceof SecurityNotAllowedFunctionError && isset($functions[$e->getFunctionName()])) {
+        $e->setTemplateLine($functions[$e->getFunctionName()]);
+      }
+
+      throw $e;
     }
 
-    protected function doDisplay(array $context, array $blocks = [])
-    {
-        $macros = $this->macros;
-        // line 1
-        echo "<code>/api/prueba-rest-prueba</code>: GET, <del>POST</del>, <del>PATCH</del>, <del>DELETE</del>";
-    }
+  }
 
-    public function getTemplateName()
-    {
-        return "__string_template__a2ae0073686ae6ae97e0bcfae58e0457";
-    }
-
-    public function getDebugInfo()
-    {
-        return array (  39 => 1,);
-    }
-
-    public function getSourceContext()
-    {
-        return new Source("", "__string_template__a2ae0073686ae6ae97e0bcfae58e0457", "");
-    }
-    
-    public function checkSecurity()
-    {
-        static $tags = array();
-        static $filters = array();
-        static $functions = array();
-
-        try {
-            $this->sandbox->checkSecurity(
-                [],
-                [],
-                []
-            );
-        } catch (SecurityError $e) {
-            $e->setSourceContext($this->source);
-
-            if ($e instanceof SecurityNotAllowedTagError && isset($tags[$e->getTagName()])) {
-                $e->setTemplateLine($tags[$e->getTagName()]);
-            } elseif ($e instanceof SecurityNotAllowedFilterError && isset($filters[$e->getFilterName()])) {
-                $e->setTemplateLine($filters[$e->getFilterName()]);
-            } elseif ($e instanceof SecurityNotAllowedFunctionError && isset($functions[$e->getFunctionName()])) {
-                $e->setTemplateLine($functions[$e->getFunctionName()]);
-            }
-
-            throw $e;
-        }
-
-    }
 }
