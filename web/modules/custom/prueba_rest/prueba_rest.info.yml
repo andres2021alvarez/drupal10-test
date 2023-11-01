@@ -1,0 +1,5 @@
+name: 'prueba rest'
+type: module
+description: 'asd'
+package: Custom
+core_version_requirement: ^10

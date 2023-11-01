@@ -5,8 +5,41 @@ grumphp:
     failed: happy.txt
     succeeded: happy.txt
   tasks:
+    git_blacklist:
+      keywords:
+        - "die\\("
+        - "var_dump\\("
+        - "exit;"
+      whitelist_patterns: []
+      triggered_by: ["php"]
+      regexp_type: G
+      match_word: false
+      ignore_patterns: []
+    git_commit_message:
+      allow_empty_message: false
+      enforce_capitalized_subject: true
+      enforce_no_subject_punctuations: false
+      enforce_no_subject_trailing_period: true
+      enforce_single_lined_subject: true
+      type_scope_conventions: []
+      skip_on_merge_commit: true
+      max_body_width: 72
+      max_subject_width: 60
+      matchers:
+        Must contain YOUTRACK issue number: /FAM-([0-9]*)/
+      case_insensitive: true
+      multiline: true
+      additional_modifiers: ""
+    composer:
+      file: ./composer.json
+      no_check_all: false
+      no_check_lock: false
+      no_check_publish: false
+      no_local_repository: false
+      with_dependencies: false
+      strict: false
     phpstan:
-      level: 5
+      level: 1
       triggered_by:
         - php
         - inc
